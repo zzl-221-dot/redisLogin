@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lsjc.beta.entity.UserDao">
+  <resultMap id="BaseResultMap" type="com.lsjc.beta.entity.Users">
+    <result column="id" jdbcType="VARCHAR" property="id" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="user_crad_id" jdbcType="VARCHAR" property="userCradId" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="dr" jdbcType="VARCHAR" property="dr" />
+    <result column="role" jdbcType="VARCHAR" property="role" />
+    <result column="level" jdbcType="VARCHAR" property="level" />
+    <result column="ctrol_user" jdbcType="VARCHAR" property="ctrolUser" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="pubts" jdbcType="TIMESTAMP" property="pubts" />
+    <result column="name2" jdbcType="VARCHAR" property="name2" />
+    <result column="name3" jdbcType="VARCHAR" property="name3" />
+    <result column="password2" jdbcType="VARCHAR" property="password2" />
+  </resultMap>
+  <insert id="insert" parameterType="com.lsjc.beta.entity.Users">
+    insert into users (id, user_name, user_crad_id,
+      `password`, dr, `role`, 
+      `level`, ctrol_user, create_time, 
+      pubts, name2, name3, 
+      password2)
+    values (#{id,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{userCradId,jdbcType=VARCHAR}, 
+      #{password,jdbcType=VARCHAR}, #{dr,jdbcType=VARCHAR}, #{role,jdbcType=VARCHAR}, 
+      #{level,jdbcType=VARCHAR}, #{ctrolUser,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{pubts,jdbcType=TIMESTAMP}, #{name2,jdbcType=VARCHAR}, #{name3,jdbcType=VARCHAR}, 
+      #{password2,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lsjc.beta.entity.Users">
+    insert into users
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userName != null">
+        user_name,
+      </if>
+      <if test="userCradId != null">
+        user_crad_id,
+      </if>
+      <if test="password != null">
+        `password`,
+      </if>
+      <if test="dr != null">
+        dr,
+      </if>
+      <if test="role != null">
+        `role`,
+      </if>
+      <if test="level != null">
+        `level`,
+      </if>
+      <if test="ctrolUser != null">
+        ctrol_user,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="pubts != null">
+        pubts,
+      </if>
+      <if test="name2 != null">
+        name2,
+      </if>
+      <if test="name3 != null">
+        name3,
+      </if>
+      <if test="password2 != null">
+        password2,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userCradId != null">
+        #{userCradId,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="dr != null">
+        #{dr,jdbcType=VARCHAR},
+      </if>
+      <if test="role != null">
+        #{role,jdbcType=VARCHAR},
+      </if>
+      <if test="level != null">
+        #{level,jdbcType=VARCHAR},
+      </if>
+      <if test="ctrolUser != null">
+        #{ctrolUser,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="pubts != null">
+        #{pubts,jdbcType=TIMESTAMP},
+      </if>
+      <if test="name2 != null">
+        #{name2,jdbcType=VARCHAR},
+      </if>
+      <if test="name3 != null">
+        #{name3,jdbcType=VARCHAR},
+      </if>
+      <if test="password2 != null">
+        #{password2,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>
