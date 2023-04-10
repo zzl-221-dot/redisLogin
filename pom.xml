@@ -6,7 +6,6 @@
     <modules>
         <module>demo-mapper</module>
         <module>demo-service</module>
-        <module>demo-com.lsjc.beta.controller</module>
         <module>demo-bootstrap</module>
         <module>demo-domain</module>
         <module>demo-util</module>
