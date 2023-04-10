@@ -45,3 +45,8 @@ CREATE TABLE `users`  (
 INSERT INTO `users` VALUES ('7000000347500645', '霞', '20130023617', 'admin', '0', '002', NULL, NULL, '2023-04-07 02:25:58', NULL, NULL, NULL, NULL, '15539912013', '3617999997@qq.com');
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+--添加唯一索引
+ALTER TABLE `users`
+    ADD INDEX `idx_id` (`id`),
+ADD INDEX `idx_user_card_id` (`user_card_id`);

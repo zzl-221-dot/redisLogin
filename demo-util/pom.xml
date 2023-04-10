@@ -11,5 +11,14 @@
 
     <artifactId>demo-util</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.lsjc.demo</groupId>
+            <artifactId>demo-domain</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+
 
 </project>
