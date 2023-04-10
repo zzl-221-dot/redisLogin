@@ -51,8 +51,12 @@ public class LoginServiceImpl implements ILoginService {
             // 当传入的对象不为 Null时 先检测环境是否拥有 redis环境
             if (ObjectUtil.isNotEmpty(users)) {
                 //加密
-                users.setPassword(Base64Util.encryptBASE64(users.getPassword().getBytes()));
-                users.setPassword2(Base64Util.encryptBASE64(users.getPassword2().getBytes()));
+                if(ObjectUtil.isNotEmpty(users.getPassword())){
+                    users.setPassword(Base64Util.encryptBASE64(users.getPassword().getBytes()));
+                }
+                if(ObjectUtil.isNotEmpty(users.getPassword2())){
+                    users.setPassword2(Base64Util.encryptBASE64(users.getPassword2().getBytes()));
+                }
 
                 if (StringUtil.isEmpty(users.getUserCardId()) || StringUtil.isEmpty(users.getPassword())) {
                     throw new RuntimeException(LoginConstant.IDORPASSWORDISNULL);
