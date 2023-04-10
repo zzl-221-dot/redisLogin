@@ -9,6 +9,7 @@
         <module>demo-bootstrap</module>
         <module>demo-domain</module>
         <module>demo-util</module>
+        <module>demo-common</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
