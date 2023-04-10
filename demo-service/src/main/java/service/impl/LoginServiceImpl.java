@@ -1,5 +1,6 @@
 package service.impl;
 
+import com.alibaba.druid.sql.visitor.functions.Char;
 import com.alibaba.fastjson.JSONObject;
 import constant.LoginConstant;
 import entity.Users;
@@ -49,6 +50,10 @@ public class LoginServiceImpl implements ILoginService {
         try {
             // 当传入的对象不为 Null时 先检测环境是否拥有 redis环境
             if (ObjectUtil.isNotEmpty(users)) {
+                //加密
+                users.setPassword(Base64Util.encryptBASE64(users.getPassword().getBytes()));
+                users.setPassword2(Base64Util.encryptBASE64(users.getPassword2().getBytes()));
+
                 if (StringUtil.isEmpty(users.getUserCardId()) || StringUtil.isEmpty(users.getPassword())) {
                     throw new RuntimeException(LoginConstant.IDORPASSWORDISNULL);
                 }
@@ -63,7 +68,6 @@ public class LoginServiceImpl implements ILoginService {
                             redisUtil.setEx(users.getUserCardId(), users.getPassword(), 24, TimeUnit.HOURS);
                             jsonObject = returnJson.resStatus(true, LoginConstant.LOGINSUCCESS);
                         }
-
                     } else {
                         // 若redis中不存在登录信息 则从数据库中查询
                         usersLogin = userMapper.selectUserByCardIdAndPass(users);
@@ -110,7 +114,9 @@ public class LoginServiceImpl implements ILoginService {
             int insert = userMapper.insert(users);
             if (insert > 0) {
                 // 插入数据库成功之后 返回用户注册后的账户 把信息存入redis当中
-                redisUtil.setEx(users.getUserCardId(), users.getPassword(), 24, TimeUnit.HOURS);
+                if(isRedis){
+                    redisUtil.setEx(users.getUserCardId(), users.getPassword(), 24, TimeUnit.HOURS);
+                }
                 jsonObject = returnJson.resStatus(true, LoginConstant.REGISTSUCCESS);
                 jsonObject.put("UserCardId", users.getUserCardId());
             } else {
@@ -122,6 +128,29 @@ public class LoginServiceImpl implements ILoginService {
             jsonObject = returnJson.resStatus(false, LoginConstant.REGISTERFAILD + e.getMessage());
         }
 
+        return jsonObject;
+    }
+
+    /**
+     * 重置密码
+     * @param user
+     * @return
+     */
+    @Override
+    public JSONObject resetPassword(Users user) {
+        Users users = userMapper.selectUserByCardId(user);
+        if(user.getEmail().equals(users.getEmail()) && user.getPhone().equals(users.getPhone())){
+            //密码加密
+                user.setPassword(Base64Util.encryptBASE64(LoginConstant.DEFAULTPASSWORD.getBytes()));
+                int resetFlag = userMapper.resetPassword(user);
+                if(resetFlag==1){
+                    jsonObject=returnJson.resStatus(true,"重置成功");
+                }else{
+                    jsonObject=returnJson.resStatus(false,"重置失败");
+                }
+        }else{
+            jsonObject=returnJson.resStatus(false,"请输入用户绑定邮箱及电话！");
+        }
         return jsonObject;
     }
 
@@ -144,7 +173,11 @@ public class LoginServiceImpl implements ILoginService {
         // 用户 密码
         if (StringUtil.isEmpty(users.getPassword())) {
             throw new RuntimeException(LoginConstant.REGISTUSERPASSWORDISNOTNULL);
+        }else{
+            //密码加密
+            users.setPassword(Base64Util.encryptBASE64(users.getPassword().getBytes()));
         }
+
         // 用户 手机号
         String phone = users.getPhone();
         if (StringUtil.isEmpty(phone)) {
