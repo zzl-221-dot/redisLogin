@@ -1,8 +1,8 @@
 package com.lsjc.beta.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.lsjc.beta.entity.Users;
-import com.lsjc.beta.service.ILoginService;
+import entity.Users;
+import service.ILoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

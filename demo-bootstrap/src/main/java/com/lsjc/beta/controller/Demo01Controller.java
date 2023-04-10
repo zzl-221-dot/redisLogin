@@ -1,7 +1,7 @@
 package com.lsjc.beta.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.lsjc.beta.service.impl.DemoServiceImpl;
+import service.impl.DemoServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
