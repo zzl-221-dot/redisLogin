@@ -2,6 +2,8 @@ package com.lsjc.beta.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import entity.Users;
+import service.NoNeedLogin;
+import service.UserLoginToken;
 import service.ILoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,6 +28,7 @@ public class LoginController {
      * @param users
      * @return
      */
+    @UserLoginToken
     @RequestMapping("login")
     public JSONObject login(@RequestBody Users users){
         return loginServiceImpl.login(users);
@@ -36,11 +39,12 @@ public class LoginController {
      * @param users
      * @return
      */
+    @NoNeedLogin
     @RequestMapping("registe")
     public JSONObject register(@RequestBody Users users){
         return loginServiceImpl.registe(users);
     }
-
+    @NoNeedLogin
     @RequestMapping("restPwd")
     public JSONObject restPwd(@RequestBody Users users){
         return loginServiceImpl.resetPassword(users);

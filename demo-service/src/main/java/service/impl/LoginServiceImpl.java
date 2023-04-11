@@ -1,18 +1,16 @@
 package service.impl;
 
-import com.alibaba.druid.sql.visitor.functions.Char;
 import com.alibaba.fastjson.JSONObject;
 import constant.LoginConstant;
 import entity.Users;
 import enums.Role;
 import enums.UserDr;
 import mapper.UserMapper;
-import org.springframework.stereotype.Component;
 import service.ILoginService;
-import util.*;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import util.*;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -100,6 +98,10 @@ public class LoginServiceImpl implements ILoginService {
             // 打印登录异常消息
             log.error(LoginConstant.LOGINFAILD + e.getMessage(), e);
             jsonObject = returnJson.resStatus(false, LoginConstant.LOGINFAILD + e.getMessage());
+        }
+        if(jsonObject.getInteger("code")==200){
+            String token = TokenUtil.token(users.getUserCardId(), users.getPassword());
+            jsonObject.put("token", token);
         }
         return jsonObject;
     }
