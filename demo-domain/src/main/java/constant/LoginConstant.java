@@ -27,4 +27,5 @@ public class LoginConstant {
     //默认密码
     public static final String DEFAULTPASSWORD = "qwe123";
     public static final String DECRYPTIONFAILURE = "解密失败";
+    public static final String RESETPASSWORDFAIL = "重置密码失败";
 }

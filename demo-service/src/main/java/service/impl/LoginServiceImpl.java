@@ -44,6 +44,8 @@ public class LoginServiceImpl implements ILoginService {
     public JSONObject login(Users users) {
         // 打印登录入参
         log.info("login/login:" + JSONObject.toJSON(users));
+        // 刷新内存
+        jsonObject = null;
         // redis 链接是否正常
         Boolean isRedis = redisUtils.checkIsRedis();
 
@@ -51,10 +53,10 @@ public class LoginServiceImpl implements ILoginService {
             // 当传入的对象不为 Null时 先检测环境是否拥有 redis环境
             if (ObjectUtil.isNotEmpty(users)) {
                 //加密
-                if(ObjectUtil.isNotEmpty(users.getPassword())){
+                if (ObjectUtil.isNotEmpty(users.getPassword())) {
                     users.setPassword(Base64Util.encryptBASE64(users.getPassword().getBytes()));
                 }
-                if(ObjectUtil.isNotEmpty(users.getPassword2())){
+                if (ObjectUtil.isNotEmpty(users.getPassword2())) {
                     users.setPassword2(Base64Util.encryptBASE64(users.getPassword2().getBytes()));
                 }
 
@@ -71,6 +73,17 @@ public class LoginServiceImpl implements ILoginService {
                             // 若账号密码无误 则刷新redis缓存时间 并登录成功
                             redisUtil.setEx(users.getUserCardId(), users.getPassword(), 24, TimeUnit.HOURS);
                             jsonObject = returnJson.resStatus(true, LoginConstant.LOGINSUCCESS);
+                        }else{
+                            // 若redis中的密码不匹配 则从数据库中查询
+                            usersLogin = userMapper.selectUserByCardIdAndPass(users);
+                            if (ObjectUtil.isNotEmpty(usersLogin)) {
+                                // 若账号密码无误 则刷新redis缓存及时间 并登录成功
+                                redisUtil.setEx(users.getUserCardId(), users.getPassword(), 24, TimeUnit.HOURS);
+                                jsonObject = returnJson.resStatus(true, LoginConstant.LOGINSUCCESS);
+                            } else {
+                                // 若根据账号密码未查询到 则失败
+                                jsonObject = returnJson.resStatus(false, LoginConstant.IDORPASSWORDISERR);
+                            }
                         }
                     } else {
                         // 若redis中不存在登录信息 则从数据库中查询
@@ -107,8 +120,11 @@ public class LoginServiceImpl implements ILoginService {
     @Override
     public JSONObject registe(Users users) {
         log.error("login/registe:" + JSONObject.toJSON(users));
+        // 刷新内存
+        jsonObject = null;
         // redis 链接是否正常
         Boolean isRedis = redisUtils.checkIsRedis();
+
         try {
             // 校验传入信息 并配置注册参数
             users = this.regex(users);
@@ -118,7 +134,7 @@ public class LoginServiceImpl implements ILoginService {
             int insert = userMapper.insert(users);
             if (insert > 0) {
                 // 插入数据库成功之后 返回用户注册后的账户 把信息存入redis当中
-                if(isRedis){
+                if (isRedis) {
                     redisUtil.setEx(users.getUserCardId(), users.getPassword(), 24, TimeUnit.HOURS);
                 }
                 jsonObject = returnJson.resStatus(true, LoginConstant.REGISTSUCCESS);
@@ -137,23 +153,32 @@ public class LoginServiceImpl implements ILoginService {
 
     /**
      * 重置密码
+     *
      * @param user
      * @return
      */
     @Override
     public JSONObject resetPassword(Users user) {
+        // 刷新内存
+        jsonObject = null;
+
         Users users = userMapper.selectUserByCardId(user);
-        if(user.getEmail().equals(users.getEmail()) && user.getPhone().equals(users.getPhone())){
-            //密码加密
+        try {
+            if (user.getEmail().equals(users.getEmail()) && user.getPhone().equals(users.getPhone())) {
+                //密码加密
                 user.setPassword(Base64Util.encryptBASE64(LoginConstant.DEFAULTPASSWORD.getBytes()));
                 int resetFlag = userMapper.resetPassword(user);
-                if(resetFlag==1){
-                    jsonObject=returnJson.resStatus(true,"重置成功");
-                }else{
-                    jsonObject=returnJson.resStatus(false,"重置失败");
+                // 若成功重置密码 刷新 redis内的密码
+                if (resetFlag == 1) {
+                    redisUtil.set(user.getUserCardId(), user.getPassword());
+                    jsonObject = returnJson.resStatus(true, "重置成功");
+                } else {
+                    jsonObject = returnJson.resStatus(false, "重置失败");
                 }
-        }else{
-            jsonObject=returnJson.resStatus(false,"请输入用户绑定邮箱及电话！");
+            }
+        } catch (Exception e) {
+            log.error(LoginConstant.RESETPASSWORDFAIL + e.getMessage(), e);
+            jsonObject = returnJson.resStatus(false, "请输入用户绑定邮箱及电话！");
         }
         return jsonObject;
     }
@@ -177,7 +202,7 @@ public class LoginServiceImpl implements ILoginService {
         // 用户 密码
         if (StringUtil.isEmpty(users.getPassword())) {
             throw new RuntimeException(LoginConstant.REGISTUSERPASSWORDISNOTNULL);
-        }else{
+        } else {
             //密码加密
             users.setPassword(Base64Util.encryptBASE64(users.getPassword().getBytes()));
         }
@@ -201,7 +226,7 @@ public class LoginServiceImpl implements ILoginService {
         if (StringUtil.isEmpty(email)) {
             throw new RuntimeException(LoginConstant.REGISTUSEREMAILISNOTNULL);
         } else {
-            // 校验输入的手机号的正确性
+            // 校验输入的邮箱的正确性
             String emailRegex = "\\w[-\\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\\.)+[A-Za-z]{2,14}";
             Pattern pattern = Pattern.compile(emailRegex);    // 编译正则表达式
             Matcher matcher = pattern.matcher(email);    // 创建给定输入模式的匹配器
