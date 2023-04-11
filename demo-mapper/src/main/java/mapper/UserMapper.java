@@ -25,4 +25,18 @@ public interface UserMapper {
      * @return
      */
     int selectCountByCardId(String userCardId);
+
+    /**
+     * 根据用户id查询所有
+     * @param users
+     * @return
+     */
+    Users selectUserByCardId(Users users);
+
+    /**
+     * 重置密码及备用密码
+     * @param users
+     * @return
+     */
+    int resetPassword(Users users);
 }

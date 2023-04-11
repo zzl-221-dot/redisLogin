@@ -41,4 +41,9 @@ public class LoginController {
         return loginServiceImpl.registe(users);
     }
 
+    @RequestMapping("restPwd")
+    public JSONObject restPwd(@RequestBody Users users){
+        return loginServiceImpl.resetPassword(users);
+    }
+
 }

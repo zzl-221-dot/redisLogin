@@ -23,4 +23,8 @@ public class LoginConstant {
     public static final String REGISTSUCCESS = "注册成功";
     public static final String REGISTFAILDPERSONTOOMAORE = "哎呀，网络波动了一下呢，请重新试试。";
     public static final String REGISTINGFOUNDMORECARDID = "手机号或邮箱已经被注册过啦";
+    public static final String ENCRYPTIONFAILURE = "加密失败";
+    //默认密码
+    public static final String DEFAULTPASSWORD = "qwe123";
+    public static final String DECRYPTIONFAILURE = "解密失败";
 }

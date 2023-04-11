@@ -7,4 +7,7 @@ public interface ILoginService {
     JSONObject login(Users users);
 
     JSONObject registe(Users users);
+
+    JSONObject resetPassword(Users users);
+
 }

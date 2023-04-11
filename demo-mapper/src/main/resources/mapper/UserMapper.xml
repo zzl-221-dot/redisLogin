@@ -147,4 +147,17 @@
   <select id="selectCountByCardId" resultType="java.lang.Integer">
         select count(*) from users where user_card_id = #{userCardId}
     </select>
+
+  <select id="selectUserByCardId" resultType="entity.Users">
+    select
+        *
+    from
+        users
+    where
+        user_card_id = #{userCardId}
+        and dr = '0'
+  </select>
+  <update id="resetPassword" >
+    update users set password=#{password},password2=#{password}  where user_card_id=#{userCardId}
+  </update>
 </mapper>
